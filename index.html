@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blood Connect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #FFF0F5 0%, #E0FFFF 50%, #E6E6FA 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: #D32F2F;
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            letter-spacing: 1.5px;
+        }
+
+        /* Main Container */
+        .container {
+            background: rgba(255, 255, 255, 0.98);
+            max-width: 550px;
+            width: 90%;
+            margin: 120px auto 40px auto;
+            padding: 35px 40px;
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            text-align: center;
+            color: #6A1B9A;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background-color: #87CEEB;
+            border-radius: 2px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            border: 2px solid #DDA0DD;
+            border-radius: 10px;
+            font-size: 16px;
+            background-color: #FDFEFE;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #87CEEB;
+            outline: none;
+            box-shadow: 0 0 10px rgba(135, 206, 235, 0.6);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(45deg, #FF6F61, #E63946);
+            color: white;
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 25px;
+            box-shadow: 0 6px 15px rgba(230, 57, 70, 0.4);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(230, 57, 70, 0.6);
+        }
+
+        /* Logout Button */
+        .logout {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            transform: translateY(0);
+            background: white;
+            color: #D32F2F;
+            width:80px;
+            border: 2px solid #D32F2F;
+            padding: 6px 8px;
+            border-radius: 20px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .logout:hover {
+            background-color: #D32F2F;
+            color: white;
+            transform: translateY(0) scale(1.05);
+            box-shadow: 0 4px 10px rgba(211, 47, 47, 0.4);
+        }
+
+        /* Utility Class */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Notes & Links */
+        .note {
+            font-size: 15px;
+            color: #777;
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .note a {
+            color: #4169E1;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .note a:hover {
+            color: #2A52BE;
+            text-decoration: underline;
+        }
+
+        /* Notifications Panel Specific Styling */
+        #notifications div {
+            background-color: #E0FFFF;
+            border: 1px solid #B0E0E6;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        #notifications hr {
+            border: none;
+            border-top: 1px dashed #D3D3D3;
+            margin: 15px 0;
+        }
+
+        #notifications small {
+            color: #888;
+            font-size: 0.85em;
+            display: block;
+            margin-top: 8px;
+            font-weight: 400;
+        }
+
+        .notification-accepted {
+            background-color: #D4EDDA; /* Light green for accepted notifications */
+            border-color: #28A745; /* Green border */
+        }
+
+        .urgency-high {
+            color: #DC3545; /* Red */
+            font-weight: 700;
+        }
+        .urgency-medium {
+            color: #FFC107; /* Yellow/Orange */
+            font-weight: 600;
+        }
+        .urgency-low {
+            color: #17A2B8; /* Info blue */
+            font-weight: 500;
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container {
+                margin: 100px auto 30px auto;
+                padding: 25px;
+                border-radius: 15px;
+            }
+            header {
+                font-size: 28px;
+                padding: 20px 15px;
+            }
+            .logout {
+                right: 15px;
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+            h2 {
+                font-size: 24px;
+            }
+            input, select, button {
+                padding: 12px;
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Blood Connect
+        <button class="logout hidden" onclick="logout()">Logout</button>
+    </header>
+
+    <div class="container" id="login-section">
+        <h2>Login</h2>
+        <label for="role">Login As:</label>
+        <select id="role" onchange="handleRoleChange()">
+            <option value="Customer">Customer</option>
+            <option value="Doctor">Doctor</option>
+            <option value="CampOwner">Camp Owner</option>
+        </select>
+        <label for="email" id="email-label">Email:</label>
+        <input type="email" id="email" placeholder="Enter your email" />
+        <label for="password">Password:</label>
+        <input type="password" id="password" placeholder="Enter your password" />
+        <button onclick="login()">Login</button>
+        <p class="note" id="signup-note">Don't have an account? <a href="#" onclick="showSignup()">Sign up</a></p>
+    </div>
+
+    <div class="container hidden" id="signup-section">
+        <h2>Sign Up (Customers Only)</h2>
+        <label for="signup-name">Full Name:</label>
+        <input type="text" id="signup-name" placeholder="Enter your full name" />
+        <label for="signup-email">Email:</label>
+        <input type="email" id="signup-email" placeholder="Enter your email" />
+        <label for="signup-password">Password:</label>
+        <input type="password" id="signup-password" placeholder="Choose a password" />
+        <label for="signup-location">Location:</label>
+        <input type="text" id="signup-location" placeholder="Enter your location (e.g., City, State)" />
+        <button onclick="signup()">Sign Up</button>
+        <p class="note"><a href="#" onclick="showLogin()">Back to Login</a></p>
+    </div>
+
+    <div class="container hidden" id="doctor-panel">
+        <h2>Blood Request Form</h2>
+        <label for="doctor-name">Your Name:</label>
+        <input type="text" id="doctor-name" placeholder="Your Name" />
+        <label for="hospital">Hospital Name:</label>
+        <input type="text" id="hospital" placeholder="Hospital Name" />
+        <label for="blood-group">Blood Group:</label>
+        <select id="blood-group">
+            <option value="">Select Blood Group</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+        </select>
+        <label for="urgency">Urgency:</label>
+        <select id="urgency">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+        </select>
+        <label for="contact">Contact No.:</label>
+        <input type="text" id="contact" placeholder="Contact No." />
+        <button onclick="submitRequest()">Submit Request</button>
+
+        <hr/>
+        <h3>Your Posted Requests & Accepted Status</h3>
+        <div id="doctor-requests">
+            </div>
+    </div>
+
+    <div class="container hidden" id="campowner-panel">
+        <h2>Post Blood Donation Camp</h2>
+        <label for="camp-location">Location:</label>
+        <input type="text" id="camp-location" placeholder="Location of Camp" />
+        <label for="camp-date">Date:</label>
+        <input type="date" id="camp-date" />
+        <label for="camp-time">Time:</label>
+        <input type="text" id="camp-time" placeholder="e.g., 10:00 AM or 03:30 PM" />
+        <button onclick="submitCamp()">Submit Camp Info</button>
+    </div>
+
+    <div class="container hidden" id="customer-panel">
+        <h2>Notifications</h2>
+        <label for="search-blood-group">Filter by Blood Group:</label>
+        <select id="search-blood-group" onchange="loadNotifications()">
+            <option value="">All Blood Groups</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+        </select>
+        <label for="search-type">Filter by Type:</label>
+        <select id="search-type" onchange="loadNotifications()">
+            <option value="">All Notifications</option>
+            <option value="Blood Request">Blood Requests</option>
+            <option value="Blood Donation Camp">Donation Camps</option>
+        </select>
+        <div id="notifications">
+        </div>
+    </div>
+
+    <script>
+        const doctorPassword = "doctor123";
+        const campOwnerPassword = "camp123";
+        let loggedInUserEmail = null; // To store the email of the logged-in customer
+
+        // Function to show/hide sections
+        function showSection(sectionId) {
+            document.querySelectorAll('.container').forEach(el => el.classList.add('hidden'));
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
+
+        // This runs once when the page fully loads
+        document.addEventListener('DOMContentLoaded', () => {
+            handleRoleChange(); // Set initial visibility based on default role
+        });
+
+        function handleRoleChange() {
+            const role = document.getElementById('role').value;
+            const signupNote = document.getElementById('signup-note');
+            const emailInput = document.getElementById('email');
+            const emailLabel = document.getElementById('email-label');
+
+            if (role === 'Customer') {
+                signupNote.classList.remove('hidden'); // Show signup link
+                emailInput.classList.remove('hidden'); // Show email input
+                emailLabel.classList.remove('hidden'); // Show email label
+            } else {
+                signupNote.classList.add('hidden'); // Hide signup link
+                emailInput.classList.add('hidden'); // Hide email input
+                emailLabel.classList.add('hidden'); // Hide email label
+            }
+        }
+
+        function showSignup() {
+            showSection('signup-section');
+        }
+
+        function showLogin() {
+            showSection('login-section');
+            handleRoleChange(); // Reset visibility based on current role when returning to login
+        }
+
+        function signup() {
+            const name = document.getElementById('signup-name').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
+            const password = document.getElementById('signup-password').value.trim();
+            const location = document.getElementById('signup-location').value.trim();
+
+            if (!name || !email || !password || !location) {
+                alert("Please fill in all signup fields (Name, Email, Password, Location).");
+                return;
+            }
+            if (!email.includes('@') || !email.includes('.')) {
+                alert("Please enter a valid email address.");
+                return;
+            }
+
+            if (localStorage.getItem(email)) {
+                alert("An account with this email already exists. Please log in.");
+                showLogin();
+                return;
+            }
+
+            localStorage.setItem(email, JSON.stringify({ name, email, password, location }));
+            alert("Sign up successful! You can now log in.");
+            showLogin();
+        }
+
+        function login() {
+            const role = document.getElementById('role').value;
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const logoutButton = document.querySelector('.logout');
+
+            if (role === "Doctor") {
+                if (password === doctorPassword) {
+                    showSection("doctor-panel");
+                    logoutButton.classList.remove('hidden');
+                    loadDoctorRequests(); // Load doctor's own requests
+                } else {
+                    alert("Invalid doctor password.");
+                }
+            } else if (role === "CampOwner") {
+                if (password === campOwnerPassword) {
+                    showSection("campowner-panel");
+                    logoutButton.classList.remove('hidden');
+                } else {
+                    alert("Invalid camp owner password.");
+                }
+            } else if (role === "Customer") {
+                if (!email || !password) {
+                    alert("Please enter both email and password for customer login.");
+                    return;
+                }
+                const data = localStorage.getItem(email);
+                if (data) {
+                    const user = JSON.parse(data);
+                    if (user.password === password) {
+                        loggedInUserEmail = email; // Store logged-in customer's email
+                        showSection("customer-panel");
+                        loadNotifications();
+                        logoutButton.classList.remove('hidden');
+                    } else {
+                        alert("Invalid customer email or password.");
+                    }
+                } else {
+                    alert("No customer account found with that email. Please sign up first.");
+                }
+            }
+        }
+
+        function submitRequest() {
+            const name = document.getElementById('doctor-name').value.trim();
+            const hospital = document.getElementById('hospital').value.trim();
+            const group = document.getElementById('blood-group').value;
+            const urgency = document.getElementById('urgency').value; // Get urgency
+            const contact = document.getElementById('contact').value.trim();
+
+            if (!name || !hospital || !group || !urgency || !contact) {
+                alert("Please fill in all fields for the blood request (Name, Hospital, Blood Group, Urgency, Contact).");
+                return;
+            }
+            if (!/^\d+$/.test(contact)) {
+                alert("Please enter a valid contact number (digits only).");
+                return;
+            }
+
+            const info = {
+                id: Date.now(), // Unique ID for each notification
+                type: 'Blood Request',
+                doctorName: name, // Changed from 'name' to 'doctorName' to avoid conflict with customer name
+                hospital: hospital,
+                group: group,
+                urgency: urgency, // Add urgency to the info object
+                contact: contact,
+                timestamp: new Date().toLocaleString(),
+                acceptedBy: null // To track who accepted the request
+            };
+
+            const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+            notifications.push(info);
+            localStorage.setItem('notifications', JSON.stringify(notifications));
+            alert("Blood request posted successfully!");
+
+            // Clear form after submission
+            document.getElementById('doctor-name').value = '';
+            document.getElementById('hospital').value = '';
+            document.getElementById('blood-group').value = '';
+            document.getElementById('urgency').value = 'Low'; // Reset urgency
+            document.getElementById('contact').value = '';
+
+            loadDoctorRequests(); // Refresh doctor's requests after submitting
+        }
+
+        function submitCamp() {
+            const location = document.getElementById('camp-location').value.trim();
+            const date = document.getElementById('camp-date').value;
+            const time = document.getElementById('camp-time').value.trim();
+
+            if (!location || !date || !time) {
+                alert("Please fill in all fields for the blood donation camp.");
+                return;
+            }
+
+            const timeRegex = /^(0?[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/i;
+            if (!timeRegex.test(time)) {
+                alert("Please enter the time in HH:MM AM/PM format (e.g., 03:00 PM or 9:30 AM).");
+                return;
+            }
+
+            const info = {
+                id: Date.now(), // Unique ID for each notification
+                type: 'Blood Donation Camp',
+                location: location,
+                date: date,
+                time: time,
+                timestamp: new Date().toLocaleString()
+            };
+
+            const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+            notifications.push(info);
+            localStorage.setItem('notifications', JSON.stringify(notifications));
+            alert("Blood donation camp posted successfully!");
+
+            // Clear form after submission
+            document.getElementById('camp-location').value = '';
+            document.getElementById('camp-date').value = '';
+            document.getElementById('camp-time').value = '';
+        }
+
+        function loadNotifications() {
+            const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+            const area = document.getElementById('notifications');
+            const searchBloodGroup = document.getElementById('search-blood-group').value;
+            const searchType = document.getElementById('search-type').value;
+
+            // Sort notifications by timestamp in descending order (most recent first)
+            notifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            const filteredNotifications = notifications.filter(n => {
+                const matchesBloodGroup = (searchBloodGroup === "" || (n.type === 'Blood Request' && n.group === searchBloodGroup));
+                const matchesType = (searchType === "" || n.type === searchType);
+                return matchesBloodGroup && matchesType;
+            });
+
+            if (filteredNotifications.length === 0) {
+                area.innerHTML = '<p style="text-align: center; color: #777; margin-top: 20px;">No matching notifications at the moment. Try a different search or check back later!</p>';
+                return;
+            }
+
+            area.innerHTML = filteredNotifications.map(n => {
+                let urgencyClass = '';
+                if (n.type === 'Blood Request') {
+                    if (n.urgency === 'High') urgencyClass = 'urgency-high';
+                    else if (n.urgency === 'Medium') urgencyClass = 'urgency-medium';
+                    else if (n.urgency === 'Low') urgencyClass = 'urgency-low';
+
+                    const acceptedInfo = n.acceptedBy ? `<br>Accepted by: ${n.acceptedBy}` : '';
+                    const acceptButton = n.acceptedBy === null ? `<button onclick="acceptRequest(${n.id}, '${loggedInUserEmail}')">Accept</button>` : '';
+
+                    return `
+                    <div class="${n.acceptedBy ? 'notification-accepted' : ''}">
+                        <b>Blood Request:</b><br>
+                        Requester: ${n.doctorName}<br>
+                        Hospital: ${n.hospital}<br>
+                        Blood Group: ${n.group}<br>
+                        Urgency: <span class="${urgencyClass}">${n.urgency}</span><br>
+                        Contact: ${n.contact}${acceptedInfo}<br>
+                        <small>Posted on: ${n.timestamp}</small>
+                        ${acceptButton}
+                    </div><hr/>`;
+                } else {
+                    return `
+                    <div>
+                        <b>Blood Donation Camp:</b><br>
+                        Location: ${n.location}<br>
+                        Date: ${n.date}<br>
+                        Time: ${n.time}<br>
+                        <small>Posted on: ${n.timestamp}</small>
+                    </div><hr/>`;
+                }
+            }).join('');
+        }
+
+        function acceptRequest(notificationId, customerEmail) {
+            if (!customerEmail) {
+                alert("Please log in as a customer to accept requests.");
+                return;
+            }
+
+            let notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+            const notificationIndex = notifications.findIndex(n => n.id === notificationId);
+
+            if (notificationIndex > -1) {
+                const notification = notifications[notificationIndex];
+                if (notification.acceptedBy === null) {
+                    const customerData = JSON.parse(localStorage.getItem(customerEmail));
+                    if (customerData) {
+                        notification.acceptedBy = customerData.name; // Store customer's name
+                        localStorage.setItem('notifications', JSON.stringify(notifications));
+                        alert("You have accepted this blood request. The doctor will be notified.");
+                        loadNotifications(); // Reload customer notifications to show accepted status
+                    } else {
+                        alert("Customer data not found. Please try logging in again.");
+                    }
+                } else {
+                    alert("This request has already been accepted.");
+                }
+            }
+        }
+
+        function loadDoctorRequests() {
+            const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+            const doctorRequestsArea = document.getElementById('doctor-requests');
+
+            const doctorsOwnRequests = notifications.filter(n => n.type === 'Blood Request');
+
+            if (doctorsOwnRequests.length === 0) {
+                doctorRequestsArea.innerHTML = '<p style="text-align: center; color: #777; margin-top: 20px;">You have not posted any blood requests yet.</p>';
+                return;
+            }
+
+            doctorRequestsArea.innerHTML = doctorsOwnRequests.map(n => {
+                let urgencyClass = '';
+                if (n.urgency === 'High') urgencyClass = 'urgency-high';
+                else if (n.urgency === 'Medium') urgencyClass = 'urgency-medium';
+                else if (n.urgency === 'Low') urgencyClass = 'urgency-low';
+
+                const acceptedStatus = n.acceptedBy ? `<br>Status: <span style="color: green; font-weight: bold;">Accepted by ${n.acceptedBy}</span>` : `<br>Status: <span style="color: orange; font-weight: bold;">Pending acceptance</span>`;
+                const acceptedClass = n.acceptedBy ? 'notification-accepted' : '';
+
+                return `
+                <div class="${acceptedClass}">
+                    <b>Your Blood Request:</b><br>
+                    Hospital: ${n.hospital}<br>
+                    Blood Group: ${n.group}<br>
+                    Urgency: <span class="${urgencyClass}">${n.urgency}</span><br>
+                    Contact: ${n.contact}${acceptedStatus}<br>
+                    <small>Posted on: ${n.timestamp}</small>
+                </div><hr/>`;
+            }).join('');
+        }
+
+
+        function logout() {
+            loggedInUserEmail = null; // Clear logged-in user email
+            document.querySelector('.logout').classList.add('hidden');
+            location.reload(); // Reload the page to return to login state
+        }
+    </script>
+</body>
+</html>
